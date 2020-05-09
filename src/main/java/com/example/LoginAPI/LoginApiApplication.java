@@ -8,6 +8,8 @@ public class LoginApiApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(LoginApiApplication.class, args);
+
+
 	}
 
 }
