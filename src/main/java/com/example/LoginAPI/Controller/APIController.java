@@ -12,12 +12,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import static org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY;
 
 
 
@@ -43,14 +50,14 @@ public class APIController {
     private UserServices userServices;
 
     @Autowired
-    private  AuthenticationManager authenticationManager;
+    private AuthenticationManager authenticationManager;
 
     @PostMapping("/signup")
-    ResponseEntity<SignUpResponse> signUpUser(@RequestBody SignUpRequest requestbody){
+    public ResponseEntity<SignUpResponse> signUpUser(@RequestBody SignUpRequest requestbody) {
 
         SignUpResponse response = userServices.registerUser(requestbody);
 
-        if(response!=null){
+        if (response != null) {
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }
 
@@ -59,25 +66,40 @@ public class APIController {
     }
 
     @PostMapping("/login")
-    ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest loginRequest, HttpServletRequest request)throws Exception{
+    public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest loginRequest, HttpServletRequest req) throws Exception {
 
-       try{
-           authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),loginRequest.getPassword()));
 
-       }catch (BadCredentialsException e){
-           throw new Exception("Incorrect Email or Password", e);
-       }
+        try {
+            Authentication auth =
+                    authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),
+                            loginRequest.getPassword()));
 
-       LoginResponse r = new LoginResponse("You are successfully Logged In");
-       return  ResponseEntity.ok(r);
+            SecurityContext sc = SecurityContextHolder.getContext();
+            sc.setAuthentication(auth);
 
+            HttpSession session = req.getSession(true);
+            session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
+            session.setMaxInactiveInterval(60);
+
+        } catch (BadCredentialsException e) {
+            throw new Exception("Incorrect Email or Password", e);
+        }
+
+        LoginResponse r = new LoginResponse("You are successfully Logged In");
+        return ResponseEntity.ok(r);
 
 
     }
 
-    @GetMapping("/random")
-    String random(){
-        return "Return Inside Random";
+    @GetMapping("/dummy")
+    public String dummy() {
+        return "Return Inside Dummy";
+    }
+
+
+    @GetMapping("/logout")
+    public void logoutUser(HttpSession session) {
+        session.invalidate();
     }
 
 
@@ -86,13 +108,3 @@ public class APIController {
 
 
 
-/*
-
-spring.datasource.url=jdbc:h2:mem:testdb
-spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=password
-spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-spring.jpa.show-sql=true
-
- */
