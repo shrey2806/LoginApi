@@ -52,11 +52,27 @@ public class APIController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+
+    /* API ENDPOINT to REGISTER USER
+       REQUEST FORMAT:
+       {
+          email : "xyz@abcd.com"
+          password : "qwertyuiop"
+
+       }
+
+
+       RESPONSE FORMAT:
+       {
+          id: 1                                <---- Auto Generated
+          email : "xyz@abcd.com"
+          password : "qwertyuiop"
+
+       }  */
     @PostMapping("/signup")
     public ResponseEntity<SignUpResponse> signUpUser(@RequestBody SignUpRequest requestbody) {
 
         SignUpResponse response = userServices.registerUser(requestbody);
-
         if (response != null) {
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }
@@ -64,6 +80,31 @@ public class APIController {
         return ResponseEntity.badRequest().body(null);
 
     }
+
+
+
+
+    /*
+        METHOD TO LOGIN USER
+
+        - User is authenticated and a session token called X-Auth Token is generated in Response Header
+        - Subsequent Request can be authenticated using that X-Auth-Token in the request header.
+        - The Session maximum inactive interval is set to 60 seconds. After 60 Seconds the session is invalid.
+
+
+        REQUEST FORMAT :
+
+         {
+           email : "xyz@abcd.com"
+           password : "qwertyuiop"
+
+         }
+
+         RESPONSE :
+         On SUCCESS :
+
+           String ( "You are successfully Logged In"):   */
+
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> loginUser(@RequestBody LoginRequest loginRequest, HttpServletRequest req) throws Exception {
@@ -91,11 +132,23 @@ public class APIController {
 
     }
 
+
+    /*
+        SECURED API ENDPOINT :
+        Only be accessed if User is authenticated. (Request Header should include  generated X-Auth-Token)
+        Session is refreshed again on accessing this endpoint. */
+
     @GetMapping("/dummy")
     public String dummy() {
         return "Return Inside Dummy";
     }
 
+
+
+    /*
+       API ENDPOINT TO LOGOUT USER OR INVALIDATE THE SESSION.
+
+     */
 
     @GetMapping("/logout")
     public void logoutUser(HttpSession session) {

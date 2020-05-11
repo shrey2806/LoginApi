@@ -27,18 +27,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     UserDetailsService userDetailsService;
 
 
-//  @Bean
-//  public HttpSessionStrategy httpSessionStrategy() {
-//        return new HeaderHttpSessionStrategy();
-//  }
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+
         auth.userDetailsService(userDetailsService);
+
     }
 
     @Override
     public void configure(WebSecurity web) throws Exception {
+
         web.ignoring()
                 .antMatchers("/h2-console/**");
 

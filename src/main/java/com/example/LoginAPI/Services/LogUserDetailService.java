@@ -18,6 +18,15 @@ public class LogUserDetailService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
 
+
+    /*
+
+        This method loads User Details with "Email"(used in place of "username")
+        and parse them into User object
+
+        Here Return type is UserDetails which is an Interface and is implemented by User Class
+
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
@@ -26,12 +35,13 @@ public class LogUserDetailService implements UserDetailsService {
         if(!entityOptional.isPresent()){
             throw new  UsernameNotFoundException("Not found : " + username );
         }
+
         ArrayList<SimpleGrantedAuthority> list = new ArrayList<>();
+
         list.add(new SimpleGrantedAuthority("ROLE_USER"));
-        User user = new User(entityOptional.get().getEmail(),entityOptional.get().getPassword(),list);
 
-        return user;
 
+        return new User(entityOptional.get().getEmail(),entityOptional.get().getPassword(),list);
 
     }
 }
