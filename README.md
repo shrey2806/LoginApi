@@ -44,7 +44,7 @@ Response Format
   ### "/dummy"  ( SECURED API ENDPOINT)
   
   - GET REQUEST
-  - REQUEST HEADERS :   ( X-AUTH-TOKEN : "fwfwq-qeefqeqe-efqefqefqe-qefqefqf") 
+  - REQUEST HEADERS :   ( X-AUTH-TOKEN : "2a2c23ee-1c57-482f-a9f4-5bd83dcab9b6") 
   - Can only be accessed if user is authenticated.
   
   RESPONSE : 
@@ -55,7 +55,7 @@ Response Format
  ### "/logout"
  
  - GET REQUEST 
- - REQUEST HEADERS :   ( X-AUTH-TOKEN : "fwfwq-qeefqeqe-efqefqefqe-qefqefqf") 
+ - REQUEST HEADERS :   ( X-AUTH-TOKEN : "2a2c23ee-1c57-482f-a9f4-5bd83dcab9b6") 
  
  Invalidates the session
  
