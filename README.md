@@ -1,5 +1,6 @@
 # LoginApi
 
+*Implemented an authentication mechanism for REST services using Spring Security and Spring Session with the help of JDBC.*
 
 *API that uses **H2 Database** for persistence and manages user session using **X-Auth-Token***
 
